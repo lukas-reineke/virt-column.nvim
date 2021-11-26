@@ -1,0 +1,104 @@
+*virt-column.txt*                       Display a character as the colorcolumn
+
+
+Author: Lukas Reineke <lukas.reineke@protonmail.com>
+Version: 1.0.0
+
+==============================================================================
+CONTENTS                                                    *virt-column.nvim*
+
+  1. Setup                                 |virt-column-setup|
+  2. Highlights                            |virt_column-highlights|
+  3. Options                               |virt-column-options|
+  4. Commands                              |virt-column-commands|
+  5. Changelog                             |virt-column-changelog|
+  6. License                               |virt-column-license|
+
+==============================================================================
+ 1. SETUP                                                  *virt-column-setup*
+
+    Call the setup function
+    >
+        require("virt-column").setup()
+
+==============================================================================
+ 2. HIGHLIGHTS                                        *virt-column-highlights*
+
+------------------------------------------------------------------------------
+VirtColumn                                                     *hl-VirtColumn*
+
+    Highlight of virtual column character.
+
+    Default: linked to Whitespace                                            ~
+
+    Example: >
+
+        highlight VirtColumn guifg=#00FF00
+
+==============================================================================
+ 2. OPTIONS                                              *virt-column-options*
+
+    Options can be passed as a table to the setup function
+    >
+        require("virt-column").setup { char = "║" }
+
+
+------------------------------------------------------------------------------
+char                                                        *virt-column-char*
+
+    The char that will be displayed as the |colorcolumn|
+
+    Default: ┃                                                               ~
+
+==============================================================================
+ 3. COMMANDS                                            *virt-column-commands*
+
+------------------------------------------------------------------------------
+:VirtColumnRefresh                                         *VirtColumnRefresh*
+
+    Refreshes the virtual column
+    Run this with |autocmd| when the file changes.
+
+    By default it is run for:
+      1. |FileChangedShellPost| *
+      2. |TextChanged| *
+      3. |TextChangedI| *
+      4. |CompleteChanged| *
+      5. |BufWinEnter| *
+      6. |WinScrolled| *
+      7. |OptionSet| colorcolumn
+
+==============================================================================
+ 4. CHANGELOG                                          *virt-column-changelog*
+
+1.0.0
+  * First release
+
+==============================================================================
+ 5. LICENSE                                              *virt-column-license*
+
+The MIT Licence
+http://www.opensource.org/licenses/mit-license.php
+
+Copyright (c) 2021 Lukas Reineke
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
+
+==============================================================================
+vim:tw=78:ts=8:ft=help:norl
