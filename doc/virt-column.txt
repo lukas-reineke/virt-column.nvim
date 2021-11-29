@@ -2,7 +2,7 @@
 
 
 Author: Lukas Reineke <lukas.reineke@protonmail.com>
-Version: 1.1.0
+Version: 1.2.0
 
 ==============================================================================
 CONTENTS                                                    *virt-column.nvim*
@@ -54,10 +54,12 @@ char                                                        *virt-column-char*
  3. COMMANDS                                            *virt-column-commands*
 
 ------------------------------------------------------------------------------
-:VirtColumnRefresh                                         *VirtColumnRefresh*
+:VirtColumnRefresh[!]                                      *VirtColumnRefresh*
 
     Refreshes the virtual column
     Run this with |autocmd| when the file changes.
+
+    With bang (VirtColumnRefresh!) refreshes the virtual column globally.
 
     By default it is run for:
       1. |FileChangedShellPost| *
@@ -67,9 +69,14 @@ char                                                        *virt-column-char*
       5. |BufWinEnter| *
       6. |WinScrolled| *
       7. |OptionSet| colorcolumn
+      8. |VimEnter| * !
+      9. |SessionLoadPost| * !
 
 ==============================================================================
  4. CHANGELOG                                          *virt-column-changelog*
+
+1.2.0
+  * Add support for global ! for |VirtColumnRefresh| 
 
 1.1.0
   * Clear |hl-ColorColumn| on setup
