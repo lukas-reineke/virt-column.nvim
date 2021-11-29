@@ -42,12 +42,6 @@ require("virt-column").setup()
 
 Please see `:help virt-column.txt`for more details and all possible values.
 
-You probably want to clear the old `ColorColumn` highlight if you use this.
-
-```vim
-highlight clear ColorColumn
-```
-
 ## Thanks
 
 Thank you @francium for the idea.
