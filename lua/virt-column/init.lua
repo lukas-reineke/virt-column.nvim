@@ -18,7 +18,7 @@ M.setup = function(config)
     M.config = vim.tbl_deep_extend("force", M.config, config or {})
     M.namespace = vim.api.nvim_create_namespace "virt-column"
 
-    vim.cmd [[command! VirtColumnRefresh lua require("virt-column").refresh()]]
+    vim.cmd [[command! -bang VirtColumnRefresh lua require("virt-column.commands").refresh("<bang>" == "!")]]
     vim.cmd [[highlight link VirtColumn Whitespace]]
     vim.cmd [[highlight clear ColorColumn]]
 
@@ -27,18 +27,25 @@ M.setup = function(config)
             autocmd!
             autocmd FileChangedShellPost,TextChanged,TextChangedI,CompleteChanged,BufWinEnter,WinScrolled * VirtColumnRefresh
             autocmd OptionSet colorcolumn VirtColumnRefresh
+            autocmd VimEnter,SessionLoadPost * VirtColumnRefresh!
         augroup END
     ]]
 end
 
 M.refresh = function()
-    local bufnr = 0
+    local bufnr = vim.api.nvim_get_current_buf()
+
+    if not vim.api.nvim_buf_is_loaded(bufnr) then
+        return
+    end
+
+    local winnr = vim.api.nvim_get_current_win()
     local win_start = vim.fn.line "w0"
     local win_end = vim.fn.line "w$"
     local offset = math.max(win_start - 11, 0)
     local range = math.min(win_end + 11, vim.api.nvim_buf_line_count(bufnr))
     local lines = vim.api.nvim_buf_get_lines(bufnr, offset, range, false)
-    local width = vim.api.nvim_win_get_width(0) - ffi.C.curwin_col_off()
+    local width = vim.api.nvim_win_get_width(winnr) - ffi.C.curwin_col_off()
     local textwidth = vim.opt.textwidth:get()
     local colorcolumn = vim.opt.colorcolumn:get()
 
@@ -56,7 +63,7 @@ M.refresh = function()
         return a > b
     end)
 
-    M.clear_buf()
+    M.clear_buf(bufnr)
 
     for i = 1, #lines, 1 do
         local current_offset = 0
