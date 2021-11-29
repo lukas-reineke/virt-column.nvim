@@ -2,7 +2,7 @@
 
 
 Author: Lukas Reineke <lukas.reineke@protonmail.com>
-Version: 1.0.0
+Version: 1.1.0
 
 ==============================================================================
 CONTENTS                                                    *virt-column.nvim*
@@ -70,6 +70,9 @@ char                                                        *virt-column-char*
 
 ==============================================================================
  4. CHANGELOG                                          *virt-column-changelog*
+
+1.1.0
+  * Clear |hl-ColorColumn| on setup
 
 1.0.0
   * First release
