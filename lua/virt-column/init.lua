@@ -20,6 +20,7 @@ M.setup = function(config)
 
     vim.cmd [[command! VirtColumnRefresh lua require("virt-column").refresh()]]
     vim.cmd [[highlight link VirtColumn Whitespace]]
+    vim.cmd [[highlight clear ColorColumn]]
 
     vim.cmd [[
         augroup VirtColumnAutogroup
