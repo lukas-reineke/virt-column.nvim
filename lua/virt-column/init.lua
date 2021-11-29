@@ -25,7 +25,7 @@ M.setup = function(config)
     vim.cmd [[
         augroup VirtColumnAutogroup
             autocmd!
-            autocmd FileChangedShellPost,TextChanged,TextChangedI,CompleteChanged,BufWinEnter,WinScrolled * VirtColumnRefresh
+            autocmd FileChangedShellPost,TextChanged,TextChangedI,CompleteChanged,BufWinEnter * VirtColumnRefresh
             autocmd OptionSet colorcolumn VirtColumnRefresh
             autocmd VimEnter,SessionLoadPost * VirtColumnRefresh!
         augroup END
@@ -40,11 +40,7 @@ M.refresh = function()
     end
 
     local winnr = vim.api.nvim_get_current_win()
-    local win_start = vim.fn.line "w0"
-    local win_end = vim.fn.line "w$"
-    local offset = math.max(win_start - 11, 0)
-    local range = math.min(win_end + 11, vim.api.nvim_buf_line_count(bufnr))
-    local lines = vim.api.nvim_buf_get_lines(bufnr, offset, range, false)
+    local lines = vim.api.nvim_buf_get_lines(bufnr, 0, -1, false)
     local width = vim.api.nvim_win_get_width(winnr) - ffi.C.curwin_col_off()
     local textwidth = vim.opt.textwidth:get()
     local colorcolumn = vim.opt.colorcolumn:get()
@@ -66,22 +62,16 @@ M.refresh = function()
     M.clear_buf(bufnr)
 
     for i = 1, #lines, 1 do
-        local current_offset = 0
-        local virt_text = {}
         for _, column in ipairs(colorcolumn) do
             local line = lines[i]:gsub("\t", string.rep(" ", vim.opt.tabstop:get()))
             if width > column and vim.api.nvim_strwidth(line) < column then
-                table.insert(virt_text, 1, { string.rep(" ", width - column - current_offset) })
-                table.insert(virt_text, 1, { M.config.char, "VirtColumn" })
-                current_offset = width - column + 1
+                vim.api.nvim_buf_set_extmark(bufnr, M.namespace, i - 1, 0, {
+                    virt_text = { { M.config.char, "VirtColumn" } },
+                    virt_text_pos = "overlay",
+                    hl_mode = "combine",
+                    virt_text_win_col = column - 1,
+                })
             end
-        end
-        if #virt_text > 0 then
-            vim.api.nvim_buf_set_extmark(bufnr, M.namespace, i - 1 + offset, 0, {
-                virt_text = virt_text,
-                virt_text_pos = "right_align",
-                hl_mode = "combine",
-            })
         end
     end
 end
