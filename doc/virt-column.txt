@@ -2,7 +2,7 @@
 
 
 Author: Lukas Reineke <lukas.reineke@protonmail.com>
-Version: 1.2.0
+Version: 1.3.0
 
 ==============================================================================
 CONTENTS                                                    *virt-column.nvim*
@@ -74,6 +74,9 @@ char                                                        *virt-column-char*
 
 ==============================================================================
  4. CHANGELOG                                          *virt-column-changelog*
+
+1.3.0
+  * use `virt_text_win_col` to position the column in the window
 
 1.2.0
   * Add support for global ! for |VirtColumnRefresh| 
