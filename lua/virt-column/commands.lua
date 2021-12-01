@@ -6,6 +6,7 @@ M.refresh = function(bang)
         vim.cmd [[noautocmd windo lua require("virt-column").refresh()]]
         if vim.api.nvim_win_is_valid(win) then
             vim.api.nvim_set_current_win(win)
+            vim.cmd [[lua require("virt-column").refresh()]]
         end
     else
         vim.cmd [[lua require("virt-column").refresh()]]
