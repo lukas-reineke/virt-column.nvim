@@ -8,7 +8,7 @@ Version: 1.3.0
 CONTENTS                                                    *virt-column.nvim*
 
   1. Setup                                 |virt-column-setup|
-  2. Highlights                            |virt_column-highlights|
+  2. Highlights                            |virt-column-highlights|
   3. Options                               |virt-column-options|
   4. Commands                              |virt-column-commands|
   5. Changelog                             |virt-column-changelog|
