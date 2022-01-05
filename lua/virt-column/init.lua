@@ -5,6 +5,7 @@ ffi.cdef "int curwin_col_off(void);"
 local M = {
     config = {
         char = "┃",
+        virtcolumn = "",
     },
 }
 
@@ -43,7 +44,7 @@ M.refresh = function()
     local lines = vim.api.nvim_buf_get_lines(bufnr, 0, -1, false)
     local width = vim.api.nvim_win_get_width(winnr) - ffi.C.curwin_col_off()
     local textwidth = vim.opt.textwidth:get()
-    local colorcolumn = vim.opt.colorcolumn:get()
+    local colorcolumn = { unpack(vim.opt.colorcolumn:get()), unpack(vim.split(M.config.virtcolumn, ",")) }
 
     for i, c in ipairs(colorcolumn) do
         if vim.startswith(c, "+") then

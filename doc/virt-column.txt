@@ -2,7 +2,7 @@
 
 
 Author: Lukas Reineke <lukas.reineke@protonmail.com>
-Version: 1.3.1
+Version: 1.4.0
 
 ==============================================================================
 CONTENTS                                                    *virt-column.nvim*
@@ -50,6 +50,14 @@ char                                                        *virt-column-char*
 
     Default: ┃                                                               ~
 
+------------------------------------------------------------------------------
+virtcolumn                                            *virt-column-virtcolumn*
+
+    Additional columns to use together with |colorcolumn| values.
+    The syntax is the same as |colorcolumn|.
+
+    Default: ""                                                              ~
+
 ==============================================================================
  3. COMMANDS                                            *virt-column-commands*
 
@@ -74,6 +82,9 @@ char                                                        *virt-column-char*
 
 ==============================================================================
  4. CHANGELOG                                          *virt-column-changelog*
+
+1.4.0
+  * Add |virt-column-virtcolumn|
 
 1.3.1
   * Fix link in the documentation
