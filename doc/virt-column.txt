@@ -2,7 +2,7 @@
 
 
 Author: Lukas Reineke <lukas.reineke@protonmail.com>
-Version: 1.4.0
+Version: 1.5.0
 
 ==============================================================================
 CONTENTS                                                    *virt-column.nvim*
@@ -17,9 +17,14 @@ CONTENTS                                                    *virt-column.nvim*
 ==============================================================================
  1. SETUP                                                  *virt-column-setup*
 
-    Call the setup function
+    Call the `setup` function
     >
         require("virt-column").setup()
+<
+    Or call the `setup_buffer` function to set buffer specific settings
+    >
+        require("virt-column").setup_buffer()
+<
 
 ==============================================================================
  2. HIGHLIGHTS                                        *virt-column-highlights*
@@ -82,6 +87,10 @@ virtcolumn                                            *virt-column-virtcolumn*
 
 ==============================================================================
  4. CHANGELOG                                          *virt-column-changelog*
+
+1.5.0
+  * Fix table concat bug
+  * Add `setup_buffer`
 
 1.4.0
   * Add |virt-column-virtcolumn|
