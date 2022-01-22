@@ -79,6 +79,7 @@ M.refresh = function()
                     virt_text_pos = "overlay",
                     hl_mode = "combine",
                     virt_text_win_col = column - 1,
+                    priority = 1,
                 })
             end
         end
