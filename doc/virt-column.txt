@@ -2,7 +2,7 @@
 
 
 Author: Lukas Reineke <lukas.reineke@protonmail.com>
-Version: 1.5.0
+Version: 1.5.1
 
 ==============================================================================
 CONTENTS                                                    *virt-column.nvim*
@@ -87,6 +87,9 @@ virtcolumn                                            *virt-column-virtcolumn*
 
 ==============================================================================
  4. CHANGELOG                                          *virt-column-changelog*
+
+1.5.1
+  * Add ext mark priority
 
 1.5.0
   * Fix table concat bug
