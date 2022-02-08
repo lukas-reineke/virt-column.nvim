@@ -22,7 +22,7 @@ M.setup = function(config)
     M.namespace = vim.api.nvim_create_namespace "virt-column"
 
     vim.cmd [[command! -bang VirtColumnRefresh lua require("virt-column.commands").refresh("<bang>" == "!")]]
-    vim.cmd [[highlight link VirtColumn Whitespace]]
+    vim.cmd [[highlight default link VirtColumn Whitespace]]
     vim.cmd [[highlight clear ColorColumn]]
 
     vim.cmd [[
