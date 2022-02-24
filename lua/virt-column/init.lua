@@ -56,9 +56,17 @@ M.refresh = function()
 
     for i, c in ipairs(colorcolumn) do
         if vim.startswith(c, "+") then
-            colorcolumn[i] = textwidth + tonumber(c:sub(2))
+            if textwidth ~= 0 then
+                colorcolumn[i] = textwidth + tonumber(c:sub(2))
+            else
+                colorcolumn[i] = nil
+            end
         elseif vim.startswith(c, "-") then
-            colorcolumn[i] = textwidth - tonumber(c:sub(2))
+            if textwidth ~= 0 then
+                colorcolumn[i] = textwidth - tonumber(c:sub(2))
+            else
+                colorcolumn[i] = nil
+            end
         else
             colorcolumn[i] = tonumber(c)
         end
