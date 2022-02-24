@@ -2,7 +2,7 @@
 
 
 Author: Lukas Reineke <lukas.reineke@protonmail.com>
-Version: 1.5.2
+Version: 1.5.3
 
 ==============================================================================
 CONTENTS                                                    *virt-column.nvim*
@@ -87,6 +87,9 @@ virtcolumn                                            *virt-column-virtcolumn*
 
 ==============================================================================
  4. CHANGELOG                                          *virt-column-changelog*
+
+1.5.3
+  * ignore `+N` `-N` columns when |textwidth| is 0
 
 1.5.2
   * use `default` for |:highlight-link|
