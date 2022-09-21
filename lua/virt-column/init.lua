@@ -1,7 +1,4 @@
 local utils = require "virt-column.utils"
-local ffi = require "ffi"
-
-ffi.cdef "int curwin_col_off(void);"
 
 local M = {
     config = {
@@ -48,9 +45,7 @@ M.refresh = function()
     end
 
     local config = vim.tbl_deep_extend("force", M.config, M.buffer_config[bufnr] or {})
-    local winnr = vim.api.nvim_get_current_win()
     local lines = vim.api.nvim_buf_get_lines(bufnr, 0, -1, false)
-    local width = vim.api.nvim_win_get_width(winnr) - ffi.C.curwin_col_off()
     local textwidth = vim.opt.textwidth:get()
     local colorcolumn = utils.concat_table(vim.opt.colorcolumn:get(), vim.split(config.virtcolumn, ","))
 
@@ -81,7 +76,7 @@ M.refresh = function()
     for i = 1, #lines, 1 do
         for _, column in ipairs(colorcolumn) do
             local line = lines[i]:gsub("\t", string.rep(" ", vim.opt.tabstop:get()))
-            if width > column and vim.api.nvim_strwidth(line) < column then
+            if vim.api.nvim_strwidth(line) < column then
                 vim.api.nvim_buf_set_extmark(bufnr, M.namespace, i - 1, 0, {
                     virt_text = { { config.char, "VirtColumn" } },
                     virt_text_pos = "overlay",
