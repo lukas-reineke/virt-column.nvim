@@ -68,17 +68,17 @@ M.refresh = function()
     end
 
     table.sort(colorcolumn, function(a, b)
-        return a > b
+        return a < b
     end)
 
     M.clear_buf(bufnr)
 
     for i = 1, #lines, 1 do
-        for _, column in ipairs(colorcolumn) do
+        for icolumn, column in ipairs(colorcolumn) do
             local line = lines[i]:gsub("\t", string.rep(" ", vim.opt.tabstop:get()))
             if vim.api.nvim_strwidth(line) < column then
                 vim.api.nvim_buf_set_extmark(bufnr, M.namespace, i - 1, 0, {
-                    virt_text = { { config.char, "VirtColumn" } },
+                    virt_text = { { config.char, "VirtColumn" .. icolumn } },
                     virt_text_pos = "overlay",
                     hl_mode = "combine",
                     virt_text_win_col = column - 1,
