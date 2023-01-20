@@ -2,7 +2,7 @@
 
 
 Author: Lukas Reineke <lukas.reineke@protonmail.com>
-Version: 1.5.4
+Version: 1.5.5
 
 ==============================================================================
 CONTENTS                                                    *virt-column.nvim*
@@ -112,3 +112,5 @@ THE SOFTWARE.
 
 ==============================================================================
 vim:tw=78:ts=8:ft=help:norl
+
+
