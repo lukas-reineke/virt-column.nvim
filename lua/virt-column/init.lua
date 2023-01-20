@@ -25,6 +25,7 @@ M.setup = function(config)
     vim.cmd [[
         augroup VirtColumnAutogroup
             autocmd!
+            autocmd ColorScheme * highlight clear ColorColumn
             autocmd FileChangedShellPost,TextChanged,TextChangedI,CompleteChanged,BufWinEnter * VirtColumnRefresh
             autocmd OptionSet colorcolumn VirtColumnRefresh
             autocmd VimEnter,SessionLoadPost * VirtColumnRefresh!
