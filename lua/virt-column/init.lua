@@ -73,7 +73,7 @@ M.refresh = function()
 
     M.clear_buf(bufnr)
 
-    for i = 1, vim.fn.line "$", 1 do
+    for i = 1, vim.api.nvim_buf_line_count(bufnr), 1 do
         for _, column in ipairs(colorcolumn) do
             local width = vim.fn.virtcol { i, "$" } - 1
             if width < column then
