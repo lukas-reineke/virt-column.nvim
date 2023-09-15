@@ -8,28 +8,16 @@ Display a character as the colorcolumn.
 
 Use your favourite plugin manager to install.
 
-#### Example with Packer
-
-[wbthomason/packer.nvim](https://github.com/wbthomason/packer.nvim)
+For [lazy.nvim](https://github.com/folke/lazy.nvim):
 
 ```lua
--- init.lua
-require("packer").startup(
-    function()
-        use "lukas-reineke/virt-column.nvim"
-    end
-)
+{ "lukas-reineke/virt-column.nvim", opts = {} },
 ```
 
-#### Example with Plug
+For [pckr.nvim](https://github.com/lewis6991/pckr.nvim):
 
-[junegunn/vim-plug](https://github.com/junegunn/vim-plug)
-
-```vim
-" init.vim
-call plug#begin('~/.vim/plugged')
-Plug 'lukas-reineke/virt-column.nvim'
-call plug#end()
+```lua
+use "lukas-reineke/virt-column.nvim"
 ```
 
 ## Setup
@@ -40,7 +28,7 @@ To configure virt-column.nvim you need to run the setup function.
 require("virt-column").setup()
 ```
 
-Please see `:help virt-column.txt`for more details and all possible values.
+Please see `:help virt-column.txt` for more details and all possible values.
 
 ## Thanks
 

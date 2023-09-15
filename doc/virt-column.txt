@@ -2,115 +2,197 @@
 
 
 Author: Lukas Reineke <lukas.reineke@protonmail.com>
-Version: 1.5.6
 
 ==============================================================================
 CONTENTS                                                    *virt-column.nvim*
 
-  1. Setup                                 |virt-column-setup|
-  2. Highlights                            |virt-column-highlights|
-  3. Options                               |virt-column-options|
-  4. Commands                              |virt-column-commands|
-  6. License                               |virt-column-license|
+  1. Introduction                          |virt-column.introduction|
+  2. Functions                             |virt-column.functions|
+  3. Types                                 |virt-column.types|
+  4. License                               |virt-column-license|
 
 ==============================================================================
- 1. SETUP                                                  *virt-column-setup*
+ 1. INTRODUCTION                                    *virt-column.introduction*
 
-    Call the `setup` function
-    >
-        require("virt-column").setup()
+ This plugin adds displays the |'colorcolumn'| with a character
+
+==============================================================================
+ 2. FUNCTIONS                                          *virt-column.functions*
+ 
+setup({config})                                          *virt-column.setup()*
+
+ Initializes and configures virt-column
+
+ Optionally, the first parameter can be a configuration table.
+ All values that are not passed in the table are set to the default value.
+ List values get merged with the default list value.
+
+ `setup` is idempotent, meaning you can call it multiple times, and each call
+ will reset virt-column. If you want to only update the current
+ configuration, use |virt-column.update()|.
+
+ Parameters: ~
+   • {config}  (|virt-column.config|?) Configuration table
+
+ Example: ~
+   >lua
+   require "virt-column".setup()
+
+
+update({config})                                        *virt-column.update()*
+
+ Updates the virt-column configuration
+
+ The first parameter is a configuration table.
+ All values that are not passed in the table are kept as they are.
+ List values get merged with the current list value.
+
+ Parameters: ~
+   • {config}  (|virt-column.config|) Configuration table
+
+ Example: ~
+   >lua
+   require "virt-column".update { enabled = false }
 <
-    Or call the `setup_buffer` function to set buffer specific settings
-    >
-        require("virt-column").setup_buffer()
+
+overwrite({config})                                  *virt-column.overwrite()*
+
+ Overwrites the virt-column configuration
+
+ The first parameter is a configuration table.
+ All values that are not passed in the table are kept as they are.
+ All values that are passed overwrite existing and default values.
+
+ Parameters: ~
+   • {config}  (|virt-column.config|) Configuration table
+
+ Example: ~
+   >lua
+   require "virt-column".overwrite {
+     exclude = { filetypes = {} }
+   }
 <
 
-==============================================================================
- 2. HIGHLIGHTS                                        *virt-column-highlights*
+setup_buffer({bufnr}, {config})                   *virt-column.setup_buffer()*
 
-------------------------------------------------------------------------------
-VirtColumn                                                     *hl-VirtColumn*
+ Configures virt-column for one buffer
 
-    Highlight of virtual column character.
+ All values that are not passed are cleared, and will fall back to
+ the global config.
+ List values get merged with the global config values.
 
-    Default: linked to Whitespace                                            ~
-
-    Example: >
-
-        highlight VirtColumn guifg=#00FF00
+ Parameters: ~
+   • {bufnr}   (number) Buffer number (0 for current buffer)
+   • {config}  (|virt-column.config|?) Configuration table
 
 ==============================================================================
- 3. OPTIONS                                              *virt-column-options*
+ 3. TYPES                                                  *virt-column.types*
 
-    Options can be passed as a table to the setup function
-    >
-        require("virt-column").setup { char = "║" }
+config                                                    *virt-column.config*
 
+ Configuration table for virt-column.
 
-------------------------------------------------------------------------------
-char                                                        *virt-column-char*
+ Fields: ~
+                                                  *virt-column.config.enabled*
+   • {enabled}     (boolean)
+                   Enables or disables virt-column
 
-    The char that will be displayed as the |colorcolumn|
+                   Default: `true` ~
 
-    Default: ┃                                                               ~
+                                                     *virt-column.config.char*
+   • {char}        (string|string[])
+                   Character, or list of characters, that get used to
+                   display the virtual column
+                   Each character has to have a display width of 0 or 1
 
-------------------------------------------------------------------------------
-virtcolumn                                            *virt-column-virtcolumn*
+                   Default: `┃` ~
 
-    Additional columns to use together with |colorcolumn| values.
-    The syntax is the same as |colorcolumn|.
+                                               *virt-column.config.virtcolumn*
+   • {virtcolumn}  (string)
+                   comma-separated list of screen columns
+                   same syntax as |'colorcolumn'|
 
-    Default: ""                                                              ~
+                   Default: empty ~
 
+                                                *virt-column.config.highlight*
+   • {highlight}   (string|string[])
+                   Highlight group, or list of highlight groups, that
+                   get applied to the virtual column
+
+                   Default: |hl-NonText| ~
+
+   • {exclude}     (|virt-column.config.exclude|)
+                   Configures what is excluded from virt-column
+
+ Example: ~
+   >lua
+   {
+       char = "|" ,
+       virtcolumn = "+1,120"
+   }
+<
+
+config.exclude                                    *virt-column.config.exclude*
+
+ Configures what is excluded from virt-column
+
+ Fields: ~
+                                        *virt-column.config.exclude.filetypes*
+   • {filetypes}  (string[])
+                  List of |'filetype'|s for which virt-column is disabled
+
+                  Default: ~
+                    • `lspinfo`
+                    • `packer`
+                    • `checkhealth`
+                    • `help`
+                    • `man`
+                    • `gitcommit`
+                    • `TelescopePrompt`
+                    • `TelescopeResults`
+
+                                         *virt-column.config.exclude.buftypes*
+   • {buftypes}  (string[])
+                  List of |'buftype'|s for which virt-column is disabled
+
+                  Default: ~
+                    • `terminal`
+                    • `nofile`
+                    • `quickfix`
+                    • `prompt`
+
+ Example: ~
+   >lua
+   {
+       filetypes = { "rust" },
+       buftype = { "terminal" },
+   }
+<
 ==============================================================================
- 4. COMMANDS                                            *virt-column-commands*
+ 4. LICENSE                                              *virt-column-license*
 
-------------------------------------------------------------------------------
-:VirtColumnRefresh[!]                                      *VirtColumnRefresh*
-
-    Refreshes the virtual column
-    Run this with |autocmd| when the file changes.
-
-    With bang (VirtColumnRefresh!) refreshes the virtual column globally.
-
-    By default it is run for:
-      1. |FileChangedShellPost| *
-      2. |TextChanged| *
-      3. |TextChangedI| *
-      4. |CompleteChanged| *
-      5. |BufWinEnter| *
-      6. |WinScrolled| *
-      7. |OptionSet| colorcolumn
-      8. |VimEnter| * !
-      9. |SessionLoadPost| * !
-
-==============================================================================
- 5. LICENSE                                              *virt-column-license*
-
-The MIT Licence
-http://www.opensource.org/licenses/mit-license.php
-
-Copyright (c) 2021 Lukas Reineke
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in
-all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-THE SOFTWARE.
+ The MIT Licence
+ http://www.opensource.org/licenses/mit-license.php
+ 
+ Copyright (c) 2023 Lukas Reineke
+ 
+ Permission is hereby granted, free of charge, to any person obtaining a copy
+ of this software and associated documentation files (the "Software"), to deal
+ in the Software without restriction, including without limitation the rights
+ to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ copies of the Software, and to permit persons to whom the Software is
+ furnished to do so, subject to the following conditions:
+ 
+ The above copyright notice and this permission notice shall be included in
+ all copies or substantial portions of the Software.
+ 
+ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ THE SOFTWARE.
 
 ==============================================================================
 vim:tw=78:ts=8:ft=help:norl
-
-
