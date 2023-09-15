@@ -1,92 +1,156 @@
 local utils = require "virt-column.utils"
+local conf = require "virt-column.config"
 
-local M = {
-    config = {
-        char = "┃",
-        virtcolumn = "",
-    },
-    buffer_config = {},
-}
+local M = {}
 
-M.clear_buf = function(bufnr)
-    if M.namespace then
-        vim.api.nvim_buf_clear_namespace(bufnr, M.namespace, 0, -1)
-    end
+---@package
+M.initialized = false
+
+local reset_highlight = function()
+    vim.api.nvim_set_hl(0, "VirtColumn", { link = "Whitespace", default = true })
+    vim.api.nvim_set_hl(0, "ColorColumn", {})
 end
 
-M.setup = function(config)
-    M.config = vim.tbl_deep_extend("force", M.config, config or {})
+local init = function()
     M.namespace = vim.api.nvim_create_namespace "virt-column"
+    reset_highlight()
 
-    vim.cmd [[command! -bang VirtColumnRefresh lua require("virt-column.commands").refresh("<bang>" == "!")]]
-    vim.cmd [[highlight default link VirtColumn Whitespace]]
-    vim.cmd [[highlight clear ColorColumn]]
+    vim.api.nvim_set_decoration_provider(M.namespace, {
+        on_win = function(_, win, bufnr, topline, botline_guess)
+            local config = conf.get_config(bufnr)
+            if not config.enabled then
+                pcall(vim.api.nvim_buf_clear_namespace, bufnr, M.namespace, 0, -1)
+                return false
+            end
 
-    vim.cmd [[
-        augroup VirtColumnAutogroup
-            autocmd!
-            autocmd ColorScheme * highlight clear ColorColumn
-            autocmd FileChangedShellPost,TextChanged,TextChangedI,CompleteChanged,BufWinEnter * VirtColumnRefresh
-            autocmd OptionSet colorcolumn VirtColumnRefresh
-            autocmd VimEnter,SessionLoadPost * VirtColumnRefresh!
-        augroup END
-    ]]
+            local textwidth = vim.api.nvim_get_option_value("textwidth", { buf = bufnr })
+            local leftcol = vim.api.nvim_win_call(win, vim.fn.winsaveview).leftcol or 0
+
+            ---@type number[]
+            local colorcolumn = {}
+            for _, c in
+                ipairs(
+                    utils.tbl_join(
+                        vim.split(vim.api.nvim_get_option_value("colorcolumn", { win = win }), ","),
+                        vim.split(config.virtcolumn, ",")
+                    )
+                )
+            do
+                if vim.startswith(c, "+") then
+                    if textwidth ~= 0 then
+                        table.insert(colorcolumn, textwidth + tonumber(c:sub(2)))
+                    end
+                elseif vim.startswith(c, "-") then
+                    if textwidth ~= 0 then
+                        table.insert(colorcolumn, textwidth - tonumber(c:sub(2)))
+                    end
+                elseif tonumber(c) then
+                    table.insert(colorcolumn, tonumber(c))
+                end
+            end
+
+            table.sort(colorcolumn, function(a, b)
+                return a > b
+            end)
+
+            pcall(vim.api.nvim_buf_clear_namespace, bufnr, M.namespace, topline, botline_guess)
+
+            local highlight = config.highlight
+            if type(highlight) == "string" then
+                highlight = { highlight }
+            end
+            local char = config.char
+            if type(char) == "string" then
+                char = { char }
+            end
+
+            for i = topline, botline_guess + 1, 1 do
+                for j, column in ipairs(colorcolumn) do
+                    local width = vim.api.nvim_win_call(win, function()
+                        ---@diagnostic disable-next-line
+                        return vim.fn.virtcol { i, "$" } - 1
+                    end)
+                    if width < column then
+                        local column_index = #colorcolumn - j + 1
+                        pcall(vim.api.nvim_buf_set_extmark, bufnr, M.namespace, i - 1, 0, {
+                            virt_text = {
+                                {
+                                    utils.tbl_get_index(char, column_index),
+                                    utils.tbl_get_index(highlight, column_index),
+                                },
+                            },
+                            virt_text_pos = "overlay",
+                            hl_mode = "combine",
+                            virt_text_win_col = column - 1 - leftcol,
+                            priority = 1,
+                        })
+                    end
+                end
+            end
+        end,
+    })
 end
 
-M.setup_buffer = function(config)
-    M.buffer_config[vim.api.nvim_get_current_buf()] = config
-    M.refresh()
+local setup = function()
+    vim.api.nvim_create_autocmd("ColorScheme", {
+        group = vim.api.nvim_create_augroup("VirtColumn", {}),
+        pattern = "*",
+        callback = function()
+            reset_highlight()
+        end,
+    })
+
+    if not M.initialized then
+        init()
+        M.initialized = true
+    end
 end
 
-M.refresh = function()
-    local bufnr = vim.api.nvim_get_current_buf()
+--- Initializes and configures virt-column.
+---
+--- Optionally, the first parameter can be a configuration table.
+--- All values that are not passed in the table are set to the default value.
+--- List values get merged with the default list value.
+---
+--- `setup` is idempotent, meaning you can call it multiple times, and each call will reset virt-column.
+--- If you want to only update the current configuration, use `update()`.
+---@param config virtcolumn.config?
+M.setup = function(config)
+    conf.set_config(config)
+    setup()
+end
 
-    if not vim.api.nvim_buf_is_loaded(bufnr) then
-        return
-    end
+--- Updates the virt-column configuration
+---
+--- The first parameter is a configuration table.
+--- All values that are not passed in the table are kept as they are.
+--- List values get merged with the current list value.
+---@param config virtcolumn.config
+M.update = function(config)
+    conf.update_config(config)
+    setup()
+end
 
-    local config = vim.tbl_deep_extend("force", M.config, M.buffer_config[bufnr] or {})
-    local textwidth = vim.opt.textwidth:get()
-    local colorcolumn = utils.concat_table(vim.opt.colorcolumn:get(), vim.split(config.virtcolumn, ","))
+--- Overwrites the virt-column configuration
+---
+--- The first parameter is a configuration table.
+--- All values that are not passed in the table are kept as they are.
+--- All values that are passed overwrite existing and default values.
+---@param config virtcolumn.config
+M.overwrite = function(config)
+    conf.overwrite_config(config)
+    setup()
+end
 
-    for i, c in ipairs(colorcolumn) do
-        if vim.startswith(c, "+") then
-            if textwidth ~= 0 then
-                colorcolumn[i] = textwidth + tonumber(c:sub(2))
-            else
-                colorcolumn[i] = nil
-            end
-        elseif vim.startswith(c, "-") then
-            if textwidth ~= 0 then
-                colorcolumn[i] = textwidth - tonumber(c:sub(2))
-            else
-                colorcolumn[i] = nil
-            end
-        else
-            colorcolumn[i] = tonumber(c)
-        end
-    end
-
-    table.sort(colorcolumn, function(a, b)
-        return a > b
-    end)
-
-    M.clear_buf(bufnr)
-
-    for i = 1, vim.api.nvim_buf_line_count(bufnr), 1 do
-        for _, column in ipairs(colorcolumn) do
-            local width = vim.fn.virtcol { i, "$" } - 1
-            if width < column then
-                vim.api.nvim_buf_set_extmark(bufnr, M.namespace, i - 1, 0, {
-                    virt_text = { { config.char, "VirtColumn" } },
-                    virt_text_pos = "overlay",
-                    hl_mode = "combine",
-                    virt_text_win_col = column - 1,
-                    priority = 1,
-                })
-            end
-        end
-    end
+--- Configures virt-column for one buffer
+---
+--- All values that are not passed are cleared, and will fall back to the global config
+---@param bufnr number
+---@param config virtcolumn.config
+M.setup_buffer = function(bufnr, config)
+    assert(M.initialized, "Tried to setup buffer without doing global setup")
+    bufnr = utils.get_bufnr(bufnr)
+    conf.set_buffer_config(bufnr, config)
 end
 
 return M
