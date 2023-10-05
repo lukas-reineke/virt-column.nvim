@@ -18,7 +18,13 @@ local init = function()
     vim.api.nvim_set_decoration_provider(M.namespace, {
         on_win = function(_, win, bufnr, topline, botline_guess)
             local config = conf.get_config(bufnr)
-            if not config.enabled then
+            local buftype = vim.api.nvim_get_option_value("buftype", { buf = bufnr })
+            local filetypes = utils.get_filetypes(bufnr)
+            if
+                not config.enabled
+                or utils.tbl_intersect(config.exclude.filetypes, filetypes)
+                or vim.tbl_contains(config.exclude.buftypes, buftype)
+            then
                 pcall(vim.api.nvim_buf_clear_namespace, bufnr, M.namespace, 0, -1)
                 return false
             end

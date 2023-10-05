@@ -28,4 +28,24 @@ M.tbl_get_index = function(list, i)
     return list[((i - 1) % #list) + 1]
 end
 
+---@param bufnr number
+M.get_filetypes = function(bufnr)
+    local filetype = vim.api.nvim_get_option_value("filetype", { buf = bufnr })
+    if filetype == "" then
+        return { "" }
+    end
+    return vim.split(filetype, ".", { plain = true, trimempty = true })
+end
+
+---@param a table
+---@param b table
+M.tbl_intersect = function(a, b)
+    for _, v in ipairs(a) do
+        if vim.tbl_contains(b, v) then
+            return true
+        end
+    end
+    return false
+end
+
 return M
