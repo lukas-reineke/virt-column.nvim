@@ -70,7 +70,8 @@ local init = function()
                 char = { char }
             end
 
-            for i = topline, botline_guess + 1, 1 do
+            local i = topline
+            while i <= botline_guess do
                 for j, column in ipairs(colorcolumn) do
                     local width = vim.api.nvim_win_call(win, function()
                         ---@diagnostic disable-next-line
@@ -92,6 +93,13 @@ local init = function()
                         })
                     end
                 end
+                local fold_end = vim.api.nvim_win_call(win, function()
+                    return vim.fn.foldclosedend(i)
+                end)
+                if fold_end ~= -1 then -- line is folded
+                    i = fold_end
+                end
+                i = i + 1
             end
         end,
     })
