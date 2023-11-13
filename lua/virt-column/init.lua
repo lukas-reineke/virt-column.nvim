@@ -94,6 +94,7 @@ local init = function()
                     end
                 end
                 local fold_end = vim.api.nvim_win_call(win, function()
+                    ---@diagnostic disable-next-line: redundant-return-value
                     return vim.fn.foldclosedend(i)
                 end)
                 if fold_end ~= -1 then -- line is folded
