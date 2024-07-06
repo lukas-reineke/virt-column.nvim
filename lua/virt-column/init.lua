@@ -168,4 +168,18 @@ M.setup_buffer = function(bufnr, config)
     conf.set_buffer_config(bufnr, config)
 end
 
+--- Toggle virt-column for one buffer
+---
+---@param bufnr number
+M.toggle_buffer = function(bufnr)
+    assert(M.initialized, "Tried to setup buffer without doing global setup")
+    bufnr = utils.get_bufnr(bufnr)
+    local config = conf.get_config(bufnr)
+    M.update { enabled = not config.enabled }
+end
+
+vim.api.nvim_create_user_command("VirtColumnToggle", function()
+    M.toggle_buffer(0)
+end, {})
+
 return M
