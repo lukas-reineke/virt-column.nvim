@@ -13,11 +13,7 @@ end
 ---@vararg T
 ---@return T
 M.tbl_join = function(...)
-    local result = {}
-    for i, v in vim.iter({ ... }):flatten():enumerate() do
-        result[i] = v
-    end
-    return result
+    return vim.iter({ ... }):flatten():totable()
 end
 
 ---@generic T
