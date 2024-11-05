@@ -14,7 +14,7 @@ end
 ---@return T
 M.tbl_join = function(...)
     local result = {}
-    for i, v in ipairs(vim.tbl_flatten { ... }) do
+    for i, v in vim.iter({ ... }):flatten():enumerate() do
         result[i] = v
     end
     return result
