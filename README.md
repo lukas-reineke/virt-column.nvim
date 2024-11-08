@@ -11,7 +11,7 @@ Use your favourite plugin manager to install.
 For [lazy.nvim](https://github.com/folke/lazy.nvim):
 
 ```lua
-{ "lukas-reineke/virt-column.nvim", opts = {} },
+{ "lukas-reineke/virt-column.nvim" },
 ```
 
 For [pckr.nvim](https://github.com/lewis6991/pckr.nvim):
@@ -22,13 +22,22 @@ use "lukas-reineke/virt-column.nvim"
 
 ## Setup
 
-To configure virt-column.nvim you need to run the setup function.
+To configure virt-column.nvim you can run the setup function or put
+configuration in `vim.g.virt_column` / `g:virt_column`. Running setup is not
+necessary with the default configuration.
 
 ```lua
-require("virt-column").setup()
+require("virt-column").setup({
+    -- your config here
+})
+-- or:
+vim.g.virt_column = {
+    -- your config here
+}
 ```
 
-Please see `:help virt-column.txt` for more details and all possible values.
+Please see [`:help virt-column.txt`](./doc/virt-column.txt) for more details
+and all possible values.
 
 ## Thanks
 
