@@ -30,6 +30,21 @@ require("virt-column").setup()
 
 Please see `:help virt-column.txt` for more details and all possible values.
 
+## FAQ
+
+#### I don't see anything
+
+Ensure that colorcolumn is set.
+```lua
+vim.opt.colorcolumn="120"
+```
+#### I still see the regular color column behind virt-column
+
+Ensure that ColorColumn highlight is properly cleared. If your colorscheme is setting it, you can use:
+```lua
+vim.cmd([[autocmd ColorScheme * highlight clear ColorColumn]])
+```
+
 ## Thanks
 
 Thank you @francium for the idea.
